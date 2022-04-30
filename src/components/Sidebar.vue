@@ -42,7 +42,7 @@ const menuOptions = [
 ]
 
 export default defineComponent({
-  name: "menu",
+  name: "sidebar",
   setup () {
     return {
       activeKey: ref(null),
