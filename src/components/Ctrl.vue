@@ -32,8 +32,9 @@
     </n-icon>
   </n-button>
   <n-space vertical style="width: 45%; padding-left: 1.5%; padding-top: 60px; position: relative; float: left">
-    <n-slider v-model:value="progress" :step="1" :tooltip="true" :max="parseInt(duration.toString())" :format-tooltip="secondsFormat"/>
-    <p style="position: absolute; top: 22px">{{this.secondsFormat(progress)}}</p>
+    <n-slider v-model:value="progress" :step="1" :tooltip="true" :max="parseInt(duration.toString())"
+              :format-tooltip="secondsFormat"/>
+    <p style="position: absolute; top: 22px">{{ this.secondsFormat(progress) }}</p>
     <p style="position: absolute; top: 22px; right: 0">{{ this.secondsFormat(duration) }}</p>
   </n-space>
 
@@ -52,10 +53,15 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import { Heart28Regular } from '@vicons/fluent'
-import { PlaySkipBackCircleOutline, PlaySkipForwardCircleOutline, PauseCircleOutline, CaretForwardCircleOutline} from '@vicons/ionicons5'
-import { ListCircle } from '@vicons/ionicons5'
+import {ref} from 'vue'
+import {Heart28Regular} from '@vicons/fluent'
+import {
+  PlaySkipBackCircleOutline,
+  PlaySkipForwardCircleOutline,
+  PauseCircleOutline,
+  CaretForwardCircleOutline
+} from '@vicons/ionicons5'
+import {ListCircle} from '@vicons/ionicons5'
 
 export default {
   name: "Ctrl",
@@ -67,14 +73,14 @@ export default {
     CaretForwardCircleOutline,
     ListCircle
   },
-  setup () {
+  setup() {
     return {
       name: "歌曲",
       player: "歌手",
       progress: ref(0),
       volume: ref(50),
-      duration: ref(60*60+13),
-      secondsFormat(sec){
+      duration: ref(60 * 60 + 13),
+      secondsFormat(sec) {
         let hour = Math.floor(sec / 3600);
         let minute = Math.floor((sec - hour * 3600) / 60);
         let second = sec - hour * 3600 - minute * 60;
@@ -87,7 +93,7 @@ export default {
         if (second < 10) {
           second = "0" + second;
         }
-        if(hour.toString() === "00"){
+        if (hour.toString() === "00") {
           return minute + ":" + second;
         }
         return hour + ":" + minute + ":" + second;

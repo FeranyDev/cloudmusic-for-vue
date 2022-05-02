@@ -8,14 +8,14 @@
 </template>
 
 <script>
-import { defineComponent, h, ref } from 'vue'
-import { NIcon } from 'naive-ui'
+import {defineComponent, h, ref} from 'vue'
+import {NIcon} from 'naive-ui'
 import {
   BookOutline as BookIcon
 } from '@vicons/ionicons5'
 
-function renderIcon (icon) {
-  return () => h(NIcon, null, { default: () => h(icon) })
+function renderIcon(icon) {
+  return () => h(NIcon, null, {default: () => h(icon)})
 }
 
 const menuOptions = [
@@ -43,7 +43,7 @@ const menuOptions = [
 
 export default defineComponent({
   name: "sidebar",
-  setup () {
+  setup() {
     return {
       activeKey: ref(null),
       menuOptions

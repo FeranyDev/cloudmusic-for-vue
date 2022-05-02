@@ -1,5 +1,7 @@
 <template>
-  <Index/>
+  <n-message-provider>
+    <Index/>
+  </n-message-provider>
 </template>
 
 <script>
