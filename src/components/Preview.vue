@@ -1,29 +1,36 @@
 <template>
   <div class="root">
     <div class="preview">
-      <img v-bind:src="songListInformation.coverImgUrl" alt="封面" class="img"/>
-      <h4 style="overflow:hidden; text-overflow: ellipsis; white-space: nowrap">{{ songListInformation.name }}</h4>
-      <p style="overflow:hidden; text-overflow: ellipsis; white-space: nowrap">{{ songListInformation.description }}</p>
+      <img
+        v-bind:src="songListInformation.coverImgUrl"
+        alt="封面"
+        class="img"
+      />
+      <h4
+        style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+      >
+        {{ songListInformation.name }}
+      </h4>
+      <p style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+        {{ songListInformation.description }}
+      </p>
     </div>
   </div>
 </template>
 
 <script>
-
 await new Promise((resolve) => setTimeout(resolve, 3000))
 
 export default {
-  name: "Preview",
-  props: [
-    'songListInformation'
-  ],
-  async setup() {
+  name: 'Preview',
+  props: ['songListInformation'],
+  setup() {
     return {
-      title: "title",
-      data: "data",
-      url: "https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
+      title: 'title',
+      data: 'data',
+      url: 'https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg',
     }
-  }
+  },
 }
 </script>
 
