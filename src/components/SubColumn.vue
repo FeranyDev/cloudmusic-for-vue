@@ -4,14 +4,14 @@
     <h5 style="float: right; margin-right: 50px; margin-top: 30px">查看更多</h5>
 
     <n-grid
-      :cols="col"
-      :collapsed="gridCollapsed"
-      :collapsed-rows="gridCollapsedRows"
-      item-responsive
-      responsive="self"
+        :cols="col"
+        :collapsed="gridCollapsed"
+        :collapsed-rows="gridCollapsedRows"
+        item-responsive
+        responsive="self"
     >
       <n-gi v-for="(data, index) in songListInformation" :key="index">
-        <Preview :song-list-information="data" style="width: 160px" />
+        <Preview :song-list-information="data" style="width: 160px" v-on:click="showListInfo(data.id)"/>
       </n-gi>
     </n-grid>
   </div>
@@ -19,22 +19,26 @@
 
 <script>
 import Preview from './Preview.vue'
-import { ref } from 'vue'
+import {ref} from 'vue'
 import axios from 'axios'
+
+function showInfo(data) {
+  console.log(data)
+}
 
 export default {
   name: 'SubColumn',
-  components: { Preview },
-  props: ['title'],
+  components: {Preview},
+  props: ['title', 'showListInfo'],
   async setup(props) {
     let api =
-      'https://api.feranydev.com/cloudmusic/top/playlist/highquality?cat=' +
-      props.title
+        'https://api.feranydev.com/cloudmusic/top/playlist/highquality?cat=' +
+        props.title + '&realIP=36.251.161.154'
     const res = await axios.get(api).catch((err) => {
       console.log(err)
     })
-
     return {
+      showInfo: showInfo,
       data: '',
       songListInformation: res.data.playlists,
       gridCollapsed: ref(true),
@@ -43,17 +47,17 @@ export default {
       showSuffix: ref(true),
       classification: 'Classification',
       col: ref(
-        parseInt((document.documentElement.clientWidth / 250).toString())
+          parseInt((document.documentElement.clientWidth / 250).toString())
       ),
     }
   },
   mounted() {
     window.addEventListener(
-      'resize',
-      () =>
-        (this.col = parseInt(
-          (document.documentElement.clientWidth / 250).toString()
-        ))
+        'resize',
+        () =>
+            (this.col = parseInt(
+                (document.documentElement.clientWidth / 250).toString()
+            ))
     )
   },
 }

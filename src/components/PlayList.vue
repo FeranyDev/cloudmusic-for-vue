@@ -1,10 +1,20 @@
 <template>
   <div class="root">
+    <!--    {{data}}-->
     <div class="header">
-      <img v-bind:src="url" alt="" style="width: 240px; float: left; margin-top: 40px">
-      <div style="float: left; margin-left: 40px; margin-top: 60px">
-        <p style="font-size: 80px;">歌单名称</p>
-        <p style="float: left"> 简介</p>
+      <img v-bind:src="url" alt="" style="float: left; width: 240px;">
+      <div style="float: left; margin-left: 40px; margin-top: 40px; width: 60%">
+        <n-ellipsis style="float:left; font-size: 80px; height: 100px; line-height: 100px" tooltip="false">
+          {{
+            data.name
+          }}
+<!--          {{value}}-->
+        </n-ellipsis>
+        <n-ellipsis style="float: left; height: 60px; line-height: 30px; text-indent: 2em"
+                    tooltip="false"
+                    :line-clamp="2"
+        > {{ data.description }}
+        </n-ellipsis>
       </div>
     </div>
     <div class="control">
@@ -23,7 +33,7 @@
     <div class="table">
       <n-data-table
           :columns="columns"
-          :data="data"
+          :data="songs"
           :pagination="pagination"
           :bordered="false"
       />
@@ -36,44 +46,75 @@ import {NButton, useMessage} from "naive-ui";
 import {CaretForwardCircleOutline} from "@vicons/ionicons5";
 import {Heart28Regular} from '@vicons/fluent'
 import {h, defineComponent} from "vue";
+import axios from "axios";
 
-export default defineComponent({
+export default {
   name: "PlayList",
   components: {
     CaretForwardCircleOutline,
     Heart28Regular,
   },
-  setup() {
-    const message = useMessage();
+  created() {
+
+  },
+  props:
+      ["listId"],
+  async setup(props) {
+    let api = "https://api.feranydev.com/cloudmusic/playlist/detail?id=" + props.listId + "&realIP=36.251.161.154"
+    const res = await axios.get(api).catch((err) => {
+      console.log(err)
+    })
     return {
-      url: "https://dailymix-images.scdn.co/v2/img/ab67616d0000b27351cca9834691e3db727c76a5/1/zh/large",
-      data,
+      data: res.data.playlist,
+      url: res.data.playlist.coverImgUrl,
+      songs: res.data.playlist.tracks,
       columns: createColumns({
         play(row) {
-          message.info(`Play ${row.title}`);
+          console.log(row.id)
         }
       }),
-      pagination: false
+      pagination: false,
+      Cutsubstr: Cutsubstr
     }
   }
-});
+};
+
+function Cutsubstr(str, len) {
+  if (!str || !len) {
+    return '';
+  }
+  let build = "";
+  for (let i = 0; i < str.length && len > 0; i++) {
+    build += str.substr(i, 1);
+    len -= str.charCodeAt(i) > 127 ? 2 : 1;
+  }
+  if (build.length < str.length)
+    build += "...";
+  return build;
+}
+
+
 const createColumns = ({play}) => {
   return [
     {
       title: "#",
-      key: "no"
+      key: "index"
     },
     {
-      title: "Title",
-      key: "title"
+      title: "name",
+      key: "name"
     },
     {
       title: "time",
-      key: "length"
+      key: "id"
+    },
+    {
+      title: "player",
+      key: "ar[0]"
     },
     {
       title: "Action",
-      key: "actions",
+      key: "ar[0].name",
       render(row) {
         return h(NButton, {
           strong: true,
@@ -86,31 +127,31 @@ const createColumns = ({play}) => {
   ];
 };
 
-const data = [
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-  {no: 12, title: "Champagne Supernova", length: "7:27"},
-];
+// const data = [
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+//   {no: 12, title: "Champagne Supernova", length: "7:27"},
+// ];
 </script>
 
 <style scoped>
@@ -121,6 +162,8 @@ const data = [
 .header {
   width: 100%;
   height: 280px;
+  flex: border-box;
+  margin-top: 40px
 }
 
 .control {

@@ -2,31 +2,33 @@
   <n-layout class="windowsHeight">
     <n-layout position="absolute" style="top: 0; bottom: 97px" has-sider>
       <n-layout-sider
-        content-style="padding: 24px;"
-        :native-scrollbar="false"
-        bordered
+          content-style="padding: 24px;"
+          :native-scrollbar="false"
+          bordered
       >
-        <Sidebar />
+        <Sidebar :control="change"/>
       </n-layout-sider>
       <n-layout content-style="padding: 24px;" :native-scrollbar="false">
-        <n-dropdown :options="options">
+        <n-dropdown
+            :options="options"
+            @select="dropdown"
+        >
           <n-button
-            strong
-            secondary
-            round
-            type="primary"
-            style="position: fixed; right: 30px; background-color: #daf0e4"
-            >用户名
+              strong
+              secondary
+              round
+              type="primary"
+              style="position: fixed; right: 30px; background-color: #daf0e4"
+              v-on:click="change('login')"
+          >用户名
           </n-button>
         </n-dropdown>
-        <n-back-top :right="50" :bottom="140" />
-        <Login v-if="false" />
-        <Main v-if="true" />
-        <PlayList v-if="false" />
+        <n-back-top :right="50" :bottom="140"/>
+        <component :is="comName" :list-id="id" :show-list-info="showListInfo"></component>
       </n-layout>
     </n-layout>
     <n-layout-footer position="absolute" style="height: 97px" bordered>
-      <Ctrl style="float: left" />
+      <Ctrl style="float: left"/>
     </n-layout-footer>
   </n-layout>
 </template>
@@ -37,13 +39,14 @@ import Ctrl from './Ctrl.vue'
 import Login from './Login.vue'
 import Main from './Main.vue'
 import PlayList from './PlayList.vue'
-import { h, defineComponent } from 'vue'
-import { NIcon } from 'naive-ui'
+import {h, defineComponent} from 'vue'
+import {NIcon} from 'naive-ui'
 import {
   PersonCircleOutline as UserIcon,
   Pencil as EditIcon,
   LogOutOutline as LogoutIcon,
 } from '@vicons/ionicons5'
+// import playList from "./PlayList";
 
 const renderIcon = (icon) => {
   return () => {
@@ -56,11 +59,27 @@ const renderIcon = (icon) => {
 export default defineComponent({
   name: 'Index',
   data() {
+    let showListInfo = (id) =>{
+      this.id = id
+      change('playList')
+    }
+    let change = (componentName) => {
+      console.log(componentName)
+      this.comName = componentName
+    }
     return {
+      comName: 'Login',
+      id: 514947114,
+      showListInfo,
+      change,
       count: 0,
       windowWidth: document.documentElement.clientWidth,
       windowHeight: document.documentElement.clientHeight + 'px',
       rightWidth: this.windowWidth - 190 + 'px',
+      dropdown(data){
+        console.log(data)
+        // change(data)
+      },
       options: [
         {
           label: '用户资料',
@@ -80,6 +99,9 @@ export default defineComponent({
       ],
     }
   },
+  setup() {
+
+  },
   components: {
     PlayList,
     Main,
@@ -93,10 +115,13 @@ export default defineComponent({
       _this.windowWidth = document.documentElement.clientWidth
       _this.windowHeight = document.documentElement.clientHeight + 'px'
       _this.rightWidth = _this.windowWidth - 190 + 'px'
+      // this.method()
     }
   },
-  created() {},
-  methods: {},
+  created() {
+  },
+  methods: {
+  },
 })
 </script>
 

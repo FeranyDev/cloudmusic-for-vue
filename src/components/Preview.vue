@@ -1,13 +1,18 @@
 <template>
   <div class="root">
     <div class="preview">
+<!--      <img-->
+<!--          v-bind:src="songListInformation.coverImgUrl"-->
+<!--          alt="封面"-->
+<!--          class="img"-->
+<!--      />-->
       <img
-        v-bind:src="songListInformation.coverImgUrl"
-        alt="封面"
-        class="img"
+          v-lazy="songListInformation.coverImgUrl"
+          alt="封面"
+          class="img"
       />
       <h4
-        style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+          style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
       >
         {{ songListInformation.name }}
       </h4>

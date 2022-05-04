@@ -4,6 +4,7 @@
       :root-indent="36"
       :indent="12"
       :options="menuOptions"
+      @update:value="control"
   />
 </template>
 
@@ -18,33 +19,53 @@ function renderIcon(icon) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
 
+function menu(key, item) {
+  console.log(key)
+  this.control(key)
+}
+
+
 const menuOptions = [
   {
-    label: '且听风吟',
-    key: 'key1',
+    label: '主页',
+    key: 'main',
     icon: renderIcon(BookIcon)
   },
   {
-    label: '且听风吟',
+    label: '搜索',
     key: 'key2',
     icon: renderIcon(BookIcon)
   },
   {
-    label: '且听风吟',
+    label: '功能1',
     key: 'key3',
     icon: renderIcon(BookIcon)
   },
   {
-    label: '且听风吟',
+    label: '功能2',
     key: 'key4',
     icon: renderIcon(BookIcon)
   }
 ]
 
+
 export default defineComponent({
   name: "sidebar",
+  // props:
+  //   {
+  //     control: {
+  //       type: Function,
+  //       default: () => {
+  //         return Function;
+  //       },
+  //     }
+  //   },
+  props:[
+      "control"
+  ],
   setup() {
     return {
+      menu: menu,
       activeKey: ref(null),
       menuOptions
     }
