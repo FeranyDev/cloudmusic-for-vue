@@ -23,7 +23,7 @@
   </n-button>
   <n-button text style="font-size: 48px;float: left; margin-top: 25px;margin-left: 1%">
     <n-icon>
-      <CaretForwardCircleOutline/>
+      <CaretForwardCircleOutline v-on:click="createAudio('https://music.163.com/song/media/outer/url?id=514947114.mp3')"/>
     </n-icon>
   </n-button>
   <n-button text style="font-size: 36px;float: left; margin-top: 35px;margin-left: 1%">
@@ -32,7 +32,7 @@
     </n-icon>
   </n-button>
   <n-space vertical style="width: 45%; padding-left: 1.5%; padding-top: 60px; position: relative; float: left">
-    <n-slider v-model:value="progress" :step="1" :tooltip="true" :max="parseInt(duration.toString())"
+    <n-slider v-model:value="progress" :step="1" :tooltip="true" :max="parseInt(duration)"
               :format-tooltip="secondsFormat"/>
     <p style="position: absolute; top: 22px">{{ this.secondsFormat(progress) }}</p>
     <p style="position: absolute; top: 22px; right: 0">{{ this.secondsFormat(duration) }}</p>
@@ -41,7 +41,7 @@
   <div style="float:right; width: 20%">
 
     <n-space vertical style="width: 150px; float: right; margin-right: 40px; padding-top: 42px;">
-      <n-slider v-model:value="volume" :step="10" :tooltip="true"/>
+      <n-slider v-model:value="volume" :step="10" :tooltip="true" @update:value="setAudioVolume" />
     </n-space>
     <n-button text style="font-size: 36px;float: right; margin-top: 35px;margin-left: 20px; margin-right: 20px">
       <n-icon>
@@ -64,6 +64,12 @@ import {
 import {ListCircle} from '@vicons/ionicons5'
 
 export default {
+  props: [
+      'audioPlay',
+      'createAudio',
+      'setAudioVolume',
+      'audioPlayerDuration'
+  ],
   name: "Ctrl",
   components: {
     Heart28Regular,
@@ -73,13 +79,13 @@ export default {
     CaretForwardCircleOutline,
     ListCircle
   },
-  setup() {
+  setup(props) {
     return {
       name: "歌曲",
       player: "歌手",
       progress: ref(0),
       volume: ref(50),
-      duration: ref(60 * 60 + 13),
+      duration: ref(props.audioPlayerDuration),
       secondsFormat(sec) {
         let hour = Math.floor(sec / 3600);
         let minute = Math.floor((sec - hour * 3600) / 60);
@@ -99,6 +105,9 @@ export default {
         return hour + ":" + minute + ":" + second;
       }
     }
+  },
+  methods:{
+    @Prop({ type: Object }) value;
   }
 }
 </script>

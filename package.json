@@ -12,6 +12,7 @@
     "axios": "^0.27.2",
     "vue": "^3.2.32",
     "vue-router": "^3.5.3",
+    "vue3-audio-player": "^1.0.4",
     "vue3-lazy": "^1.0.0-alpha.1"
   },
   "devDependencies": {
