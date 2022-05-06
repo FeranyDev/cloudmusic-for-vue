@@ -28,7 +28,10 @@
             :is="comName"
             :list-id="id"
             :create-play="createAudio"
+            :create-song-list="createSongList"
+            :seconds-format="secondsFormat"
             :show-list-info="showListInfo"></component>
+        <router-view></router-view>
       </n-layout>
     </n-layout>
     <n-layout-footer position="absolute" style="height: 97px" bordered>
@@ -50,18 +53,18 @@
         </n-icon>
       </n-button>
       <n-button text style="font-size: 36px;float: left; margin-top: 35px;margin-left: 5%">
-        <n-icon>
+        <n-icon v-on:click="previousSong">
           <PlaySkipBackCircleOutline/>
         </n-icon>
       </n-button>
       <n-button text style="font-size: 48px;float: left; margin-top: 25px;margin-left: 1%">
         <n-icon v-on:click="audioPlay">
-          <CaretForwardCircleOutline v-if="notPlay" />
+          <CaretForwardCircleOutline v-if="notPlay"/>
           <PauseCircleOutline v-else/>
         </n-icon>
       </n-button>
       <n-button text style="font-size: 36px;float: left; margin-top: 35px;margin-left: 1%">
-        <n-icon>
+        <n-icon v-on:click="nextSong">
           <PlaySkipForwardCircleOutline v-on:click=""/>
         </n-icon>
       </n-button>
@@ -131,6 +134,9 @@ export default defineComponent({
       this.comName = componentName
     }
     return {
+      first: true,
+      songList: [],
+      songNo: 0,
       notPlay: true,
       name: "歌曲",
       player: "歌手",
@@ -189,13 +195,30 @@ export default defineComponent({
     }
   },
   methods: {
+    createSongList(songs) {
+      this.songList = songs
+      this.songNo = 0
+      this.createAudio(songs[0])
+    },
+    nextSong() {
+      if (this.songList.length === 0) return
+      this.songNo++
+      if (this.songNo >= this.songList.length) this.songNo = 0
+      this.createAudio(this.songList[this.songNo])
+    },
+    previousSong() {
+      if (this.songList.length === 0) return
+      this.songNo--
+      if (this.songNo < 0) this.songNo = this.songList.length - 1
+      this.createAudio(this.songList[this.songNo])
+    },
     setPlayTime(value) {
       this.$refs.audioPlayer.currentTime = value
     },
     setPlayVolume(value) {
       this.$refs.audioPlayer.volume = (value / 100)
     },
-    async createAudio(id) {
+    async getSongInfo(id) {
       let that = this
       let api = "https://api.feranydev.com/cloudmusic/song/detail?ids=" + id + "&realIP=36.251.161.154"
       const res = await axios.get(api).catch((err) => {
@@ -206,25 +229,51 @@ export default defineComponent({
       console.log(name + player)
       that.name = name
       that.player = player
+    },
+    createAudio(id) {
+      this.getSongInfo(id)
       const {audioPlayer} = this.$refs
       audioPlayer.src = 'https://music.163.com/song/media/outer/url?id=' + id + '.mp3'
-      await audioPlayer.play()
+      audioPlayer.load()
+      let playPromise = audioPlayer.play()
+      if (playPromise !== undefined) {
+        playPromise.then(_ => {
+          // 这里就已经开始播放了
+          // 播放UI会出现（如果控件显示的话）
+          // 此时可以安全的暂停音视频了
+          // audioPlayer.pause();
+        }).catch(error => {
+          // 无法自动播放
+          // 显示暂停的UI
+        });
+      }
+      if (this.first) {
+        this.setEventListener(audioPlayer)
+        this.first = false
+      }
+    },
+    setEventListener(audioPlayer){
+      let that = this
       audioPlayer.addEventListener("durationchange", function () {
-        let time = parseInt(audioPlayer.duration.toString())
-        that.duration = ref(time)
-        that.notPlay = false
+        that.duration = ref(parseInt(audioPlayer.duration.toString()))
       });
       audioPlayer.addEventListener("timeupdate", function () {
-        let time = parseInt(audioPlayer.currentTime.toString())
-        that.progress = ref(time)
+        that.progress = ref(parseInt(audioPlayer.currentTime.toString()))
         that.duration = ref(parseInt(audioPlayer.duration.toString()))
         that.notPlay = false
       });
       audioPlayer.addEventListener("pause", function () {
         that.notPlay = true
       });
+      audioPlayer.addEventListener('ended', function (){
+        audioPlayer.pause();
+        that.notPlay = true
+        console.log('下一曲')
+        that.nextSong()
+      });
     },
     audioPlay() {
+      if (this.$refs.audioPlayer.src === 'http://localhost:3000/%7B%7Burl%7D%7D') return
       if (this.$refs.audioPlayer.paused) {
         this.$refs.audioPlayer.play()
       } else {
@@ -236,7 +285,6 @@ export default defineComponent({
     PlayList,
     Main,
     Login,
-    Ctrl,
     Sidebar,
     Heart28Regular,
     PlaySkipBackCircleOutline,

@@ -3,8 +3,20 @@ import App from './App.vue'
 import './index.css'
 import naive from 'naive-ui'
 import Axios from 'axios'
+// import Login from './components/Login.vue'
+// import Main from './components/Main.vue'
 
 let audio = new Audio();
+
+// const routes = [
+//     { path: '/login', component: Login },
+//     { path: '/main', component: Main },
+// ]
+//
+// const router = VueRouter.createRouter({
+//     history: VueRouter.createWebHashHistory(),
+//     routes,
+// })
 
 const app = createApp(App)
 app.config.globalProperties.Axios = Axios
@@ -24,7 +36,7 @@ app.directive('lazy', {
                     el.src = value
                     // 如果图片加载失败，显示默认的图片
                     el.onerror = function() {
-                        el.src = require('src/assets/MusicNote224Filled.svg')
+                        el.src = require('../src/assets/MusicNote224Filled.svg')
                     }
                 }
             },
@@ -37,6 +49,6 @@ app.directive('lazy', {
     }
 })
 
-
+// app.use(router)
 app.use(naive)
 app.mount('#app')

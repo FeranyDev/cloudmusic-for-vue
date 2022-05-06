@@ -17,7 +17,7 @@
     </div>
     <div class="control">
       <n-button text style="font-size: 70px;float: left; margin-top: 25px; margin-left: 1%">
-        <n-icon>
+        <n-icon v-on:click="setSongList">
           <CaretForwardCircleOutline/>
         </n-icon>
       </n-button>
@@ -40,15 +40,12 @@
 </template>
 
 <script>
-import {NButton, useMessage} from "naive-ui";
+import {NButton} from "naive-ui";
 import {CaretForwardCircleOutline} from "@vicons/ionicons5";
 import {Heart28Regular} from '@vicons/fluent'
-import {h, defineComponent} from "vue";
+import {h} from "vue";
 import axios from "axios";
 
-const playList = ({
-
-})
 
 export default {
   name: "PlayList",
@@ -60,27 +57,62 @@ export default {
 
   },
   props: [
-      "listId",
-      'createPlay'
+    "listId",
+    'createPlay',
+    'createSongList',
+    'secondsFormat'
   ],
   async setup(props) {
     let api = "https://api.feranydev.com/cloudmusic/playlist/detail?id=" + props.listId + "&realIP=36.251.161.154"
-    const res = await axios.get(api).catch((err) => {
+    let data = []
+    let playlist = ''
+    await axios.get(api).then((res) => {
+      playlist = res.data.playlist
+      let tmp = playlist.tracks
+      for (let i = 0; i < tmp.length; i++) {
+        let time =  props.secondsFormat(parseInt((tmp[i].dt / 1000).toString()))
+        data[i] = {
+          index: i,
+          name: tmp[i].name, //歌名
+          id: tmp[i].id,   //id
+          ar: tmp[i].ar[0].name,   //作者
+          dt: time,   //时长
+          al: tmp[i].al,   //专辑
+          picUrl: tmp[i].al.picUrl//图片
+        }
+      }
+      console.log(data)
+    }).catch((err) => {
       console.log(err)
     })
-    // res.data.playlist.dt = parseInt((res.data.playlist.dt / 1000).toString())
     return {
-      data: res.data.playlist,
-      url: res.data.playlist.coverImgUrl,
-      songs: res.data.playlist.tracks,
+      data: playlist,
+      url: playlist.coverImgUrl,
+      // songs: res.data.playlist.tracks,
+      songs: data,
+      pagination: false,
+      Cutsubstr: Cutsubstr,
       columns: createColumns({
         play(row) {
           props.createPlay(row.id)
         }
       }),
-      pagination: false,
-      Cutsubstr: Cutsubstr
     }
+  },
+  methods: {
+    setSongList: function () {
+      let data = this.songs
+      console.log(data)
+      let songs = []
+      for (let i = 0; i < data.length; i++) {
+        songs[i] = data[i].id
+      }
+      console.log(songs)
+      this.createSongList(songs)
+    }
+  },
+  deactivated(){
+    console.log("死了")
   }
 };
 
@@ -106,20 +138,20 @@ const createColumns = ({play}) => {
       key: "index"
     },
     {
-      title: "name",
+      title: "Name",
       key: "name"
     },
     {
-      title: "time",
+      title: "Time",
       key: "dt"
     },
     {
-      title: "player",
-      key: "ar[0]"
+      title: "Player",
+      key: "ar"
     },
     {
       title: "Action",
-      key: "ar[0].name",
+      key: "id",
       render(row) {
         return h(NButton, {
           strong: true,
