@@ -5,10 +5,8 @@
       <img v-bind:src="url" alt="" style="float: left; width: 240px;">
       <div style="float: left; margin-left: 40px; margin-top: 40px; width: 60%">
         <n-ellipsis style="float:left; font-size: 80px; height: 100px; line-height: 100px" tooltip="false">
-          {{
-            data.name
-          }}
-<!--          {{value}}-->
+          {{ data.name }}
+          <!--          {{value}}-->
         </n-ellipsis>
         <n-ellipsis style="float: left; height: 60px; line-height: 30px; text-indent: 2em"
                     tooltip="false"
@@ -48,6 +46,10 @@ import {Heart28Regular} from '@vicons/fluent'
 import {h, defineComponent} from "vue";
 import axios from "axios";
 
+const playList = ({
+
+})
+
 export default {
   name: "PlayList",
   components: {
@@ -57,20 +59,23 @@ export default {
   created() {
 
   },
-  props:
-      ["listId"],
+  props: [
+      "listId",
+      'createPlay'
+  ],
   async setup(props) {
     let api = "https://api.feranydev.com/cloudmusic/playlist/detail?id=" + props.listId + "&realIP=36.251.161.154"
     const res = await axios.get(api).catch((err) => {
       console.log(err)
     })
+    // res.data.playlist.dt = parseInt((res.data.playlist.dt / 1000).toString())
     return {
       data: res.data.playlist,
       url: res.data.playlist.coverImgUrl,
       songs: res.data.playlist.tracks,
       columns: createColumns({
         play(row) {
-          console.log(row.id)
+          props.createPlay(row.id)
         }
       }),
       pagination: false,
@@ -106,7 +111,7 @@ const createColumns = ({play}) => {
     },
     {
       title: "time",
-      key: "id"
+      key: "dt"
     },
     {
       title: "player",
