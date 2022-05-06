@@ -1,11 +1,6 @@
 <template>
   <div class="root">
     <div class="preview">
-<!--      <img-->
-<!--          v-bind:src="songListInformation.coverImgUrl"-->
-<!--          alt="封面"-->
-<!--          class="img"-->
-<!--      />-->
       <img
           v-lazy="songListInformation.coverImgUrl"
           alt="封面"

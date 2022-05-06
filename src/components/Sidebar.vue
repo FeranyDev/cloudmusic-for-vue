@@ -51,15 +51,6 @@ const menuOptions = [
 
 export default defineComponent({
   name: "sidebar",
-  // props:
-  //   {
-  //     control: {
-  //       type: Function,
-  //       default: () => {
-  //         return Function;
-  //       },
-  //     }
-  //   },
   props:[
       "control"
   ],

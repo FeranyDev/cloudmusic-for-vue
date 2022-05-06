@@ -88,7 +88,7 @@
           </n-icon>
         </n-button>
       </div>
-      <audio src='{{url}}' ref="audioPlayer" @timeupdate="onPlaying"/>
+      <audio src='{{url}}' ref="audioPlayer"/>
     </n-layout-footer>
   </n-layout>
 </template>
@@ -292,8 +292,6 @@ export default defineComponent({
     PauseCircleOutline,
     CaretForwardCircleOutline,
     ListCircle
-  },
-  setup() {
   },
   mounted() {
     const _this = this
