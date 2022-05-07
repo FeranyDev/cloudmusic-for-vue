@@ -30,6 +30,7 @@
             :create-play="createAudio"
             :create-song-list="createSongList"
             :seconds-format="secondsFormat"
+            :change="change"
             :show-list-info="showListInfo"></component>
         <router-view></router-view>
       </n-layout>
@@ -98,6 +99,7 @@ import Sidebar from './Sidebar.vue'
 import Login from './Login.vue'
 import Main from './Main.vue'
 import PlayList from './PlayList.vue'
+import Search from './Search.vue'
 import {defineComponent, h, ref} from 'vue'
 import {NIcon} from 'naive-ui'
 import {
@@ -147,7 +149,7 @@ export default defineComponent({
       windowWidth: document.documentElement.clientWidth,
       windowHeight: document.documentElement.clientHeight + 'px',
       url: '',
-      comName: 'Login',
+      comName: 'Search',
       id: 514947114,
       audioPlayerDuration: ref(0),
       rightWidth: this.windowWidth - 190 + 'px',
@@ -221,7 +223,9 @@ export default defineComponent({
     async getSongInfo(id) {
       let that = this
       let api = "https://api.feranydev.com/cloudmusic/song/detail?ids=" + id + "&realIP=36.251.161.154"
-      const res = await axios.get(api).catch((err) => {
+      const res = await axios.get(api,{
+        withCredentials: true,
+      }).catch((err) => {
         console.log(err)
       })
       let name = res.data.songs[0].name
@@ -238,13 +242,7 @@ export default defineComponent({
       let playPromise = audioPlayer.play()
       if (playPromise !== undefined) {
         playPromise.then(_ => {
-          // 这里就已经开始播放了
-          // 播放UI会出现（如果控件显示的话）
-          // 此时可以安全的暂停音视频了
-          // audioPlayer.pause();
         }).catch(error => {
-          // 无法自动播放
-          // 显示暂停的UI
         });
       }
       if (this.first) {
@@ -282,6 +280,7 @@ export default defineComponent({
     }
   },
   components: {
+    Search,
     PlayList,
     Main,
     Login,

@@ -33,7 +33,7 @@ const menuOptions = [
   },
   {
     label: '搜索',
-    key: 'key2',
+    key: 'search',
     icon: renderIcon(BookIcon)
   },
   {

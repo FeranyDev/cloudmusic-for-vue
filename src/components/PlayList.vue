@@ -63,7 +63,9 @@ export default {
     let api = "https://api.feranydev.com/cloudmusic/playlist/detail?id=" + props.listId + "&realIP=36.251.161.154"
     let data = []
     let playlist = ''
-    await axios.get(api).then((res) => {
+    await axios.get(api,{
+      withCredentials: true,
+    }).then((res) => {
       playlist = res.data.playlist
       let tmp = playlist.tracks
       for (let i = 0; i < tmp.length; i++) {

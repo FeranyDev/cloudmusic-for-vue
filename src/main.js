@@ -4,10 +4,11 @@ import './index.css'
 import naive from 'naive-ui'
 import Axios from 'axios'
 let audio = new Audio();
-
+import VueCookies from 'vue-cookies'
 
 const app = createApp(App)
-app.config.globalProperties.Axios = Axios
+
+Axios.defaults.withCredentials = true
 app.config.globalProperties.audioObject = audio
 
 app.directive('lazy', {
@@ -29,5 +30,7 @@ app.directive('lazy', {
         observer.observe(el)
     }
 })
+
+app.use(VueCookies)
 app.use(naive)
 app.mount('#app')
