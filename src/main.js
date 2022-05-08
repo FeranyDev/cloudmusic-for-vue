@@ -33,6 +33,7 @@ app.directive('lazy', {
     }
 })
 
+
 app.use(VueCookies)
 app.use(naive)
 app.mount('#app')

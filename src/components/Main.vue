@@ -8,6 +8,6 @@ import Songs from "./Songs.vue";
 export default {
   name: 'Main',
   components: {Songs},
-  props:['showListInfo'],
+  props: ['showListInfo'],
 }
 </script>

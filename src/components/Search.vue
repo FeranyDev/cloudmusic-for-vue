@@ -1,7 +1,8 @@
 <template>
   <n-layout style="height: border-box">
-    <n-layout-header style="height: 64px;" bordered>
-      <n-input type="text" placeholder="搜索" clearable round @update:value="searchSong" style="max-width: 400px; float: left"/>
+    <n-layout-header bordered style="height: 64px;">
+      <n-input clearable placeholder="搜索" round style="max-width: 400px; float: left" type="text"
+               @update:value="searchSong"/>
     </n-layout-header>
   </n-layout>
   <div>
@@ -47,7 +48,7 @@ export default {
   methods: {
     async searchSong(value) {
       console.log(value)
-      if (value  === '') return
+      if (value === '') return
       let api = 'https://api.feranydev.com/cloudmusic/cloudsearch?keywords=' + value
       let datas = []
       await axios.get(api, {
@@ -56,8 +57,8 @@ export default {
         console.log(res)
         console.log(res.data)
         let tmp = res.data.result.songs
-        for (let i = 0; i < tmp.length; i++){
-          let time =  this.secondsFormat(parseInt((tmp[i].dt / 1000).toString()))
+        for (let i = 0; i < tmp.length; i++) {
+          let time = this.secondsFormat(parseInt((tmp[i].dt / 1000).toString()))
           datas[i] = {
             index: i + 1,
             name: tmp[i].name, //歌名

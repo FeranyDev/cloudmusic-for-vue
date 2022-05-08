@@ -1,26 +1,26 @@
 <template>
   <div class="root">
     <div class="header">
-      <img v-bind:src="url" alt="" style="float: left; width: 240px;">
+      <img alt="" style="float: left; width: 240px;" v-bind:src="url">
       <div style="float: left; margin-left: 40px; margin-top: 40px; width: 60%">
         <n-ellipsis style="float:left; font-size: 80px; height: 100px; line-height: 100px" tooltip="false">
           {{ data.name }}
         </n-ellipsis>
-        <n-ellipsis style="float: left; height: 60px; line-height: 30px; text-indent: 2em"
+        <n-ellipsis :line-clamp="2"
+                    style="float: left; height: 60px; line-height: 30px; text-indent: 2em"
                     tooltip="false"
-                    :line-clamp="2"
         > {{ data.description }}
         </n-ellipsis>
       </div>
     </div>
     <div class="control">
-      <n-button text style="font-size: 70px;float: left; margin-top: 25px; margin-left: 1%">
+      <n-button style="font-size: 70px;float: left; margin-top: 25px; margin-left: 1%" text>
         <n-icon v-on:click="setSongList">
           <CaretForwardCircleOutline/>
         </n-icon>
       </n-button>
 
-      <n-button text style="font-size: 45px;float: left; margin-top: 40px; margin-left: 30px">
+      <n-button style="font-size: 45px;float: left; margin-top: 40px; margin-left: 30px" text>
         <n-icon color="">
           <Heart28Regular/>
         </n-icon>
@@ -62,13 +62,13 @@ export default {
     let api = "https://api.feranydev.com/cloudmusic/playlist/detail?id=" + props.listId + "&realIP=36.251.161.154"
     let data = []
     let playlist = ''
-    await axios.get(api,{
+    await axios.get(api, {
       withCredentials: true,
     }).then((res) => {
       playlist = res.data.playlist
       let tmp = playlist.tracks
       for (let i = 0; i < tmp.length; i++) {
-        let time =  props.secondsFormat(parseInt((tmp[i].dt / 1000).toString()))
+        let time = props.secondsFormat(parseInt((tmp[i].dt / 1000).toString()))
         data[i] = {
           index: i + 1,
           name: tmp[i].name, //歌名
@@ -107,7 +107,7 @@ export default {
       this.createSongList(songs)
     }
   },
-  deactivated(){
+  deactivated() {
     console.log("死了")
   }
 };

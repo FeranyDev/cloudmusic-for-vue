@@ -1,9 +1,9 @@
 <template>
   <n-menu
       v-model:value="activeKey"
-      :root-indent="36"
       :indent="12"
       :options="menuOptions"
+      :root-indent="36"
       @update:value="control"
   />
 </template>
@@ -35,24 +35,14 @@ const menuOptions = [
     label: '搜索',
     key: 'search',
     icon: renderIcon(BookIcon)
-  },
-  {
-    label: '功能1',
-    key: 'key3',
-    icon: renderIcon(BookIcon)
-  },
-  {
-    label: '功能2',
-    key: 'key4',
-    icon: renderIcon(BookIcon)
   }
 ]
 
 
 export default defineComponent({
   name: "sidebar",
-  props:[
-      "control"
+  props: [
+    "control"
   ],
   setup() {
     return {

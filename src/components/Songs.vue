@@ -2,9 +2,9 @@
   <SubColumn
       v-for="(tag, index) in tags"
       :key="index"
-      style="padding-left: 20px"
-      :title="tag"
       :show-list-info="showListInfo"
+      :title="tag"
+      style="padding-left: 20px"
   />
 </template>
 

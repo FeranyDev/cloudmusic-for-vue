@@ -1,5 +1,5 @@
 <template>
-  <n-gradient-text size="48" type="error" style="float: bottom" v-cloak>{{ text }}</n-gradient-text>
+  <n-gradient-text v-cloak size="48" style="float: bottom" type="error">{{ text }}</n-gradient-text>
 </template>
 
 <script>
@@ -14,12 +14,10 @@ export default {
     'id',
     'text'
   ],
-  components: {
-  },
+  components: {},
 
   data() {
-    return {
-    }
+    return {}
   },
 }
 </script>

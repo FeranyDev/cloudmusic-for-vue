@@ -4,9 +4,9 @@
     <h5 style="float: right; margin-right: 50px; margin-top: 30px">查看更多</h5>
 
     <n-grid
-        :cols="col"
         :collapsed="gridCollapsed"
         :collapsed-rows="gridCollapsedRows"
+        :cols="col"
         item-responsive
         responsive="self"
     >

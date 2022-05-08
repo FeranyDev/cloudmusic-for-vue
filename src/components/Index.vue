@@ -19,8 +19,8 @@
               strong
               style="position: fixed; right: 30px; background-color: #daf0e4"
               type="primary"
-              v-on:click="change('login')"
-          >用户名
+              v-on:click="loginTest"
+          >{{ username }}
           </n-button>
         </n-dropdown>
         <n-back-top :bottom="140" :right="50"/>
@@ -41,8 +41,8 @@
     <n-layout-footer bordered position="absolute" style="height: 97px">
       <n-image
           preview-disabled
-          v-bind:src="iconUrl"
           style="margin-left: 20px; margin-top: 10px; margin-right: 10px; float: left"
+          v-bind:src="iconUrl"
           width="80"
       />
       <div style="float:left; margin-top: 25px; margin-right: 30px">
@@ -86,7 +86,7 @@
           <n-slider v-model:value="volume" :step="10" :tooltip="true" @update:value="setPlayVolume"/>
         </n-space>
         <n-button style="font-size: 36px;float: right; margin-top: 35px;margin-left: 20px; margin-right: 20px" text>
-          <n-icon>
+          <n-icon v-on:click="islogin">
             <ListCircle/>
           </n-icon>
         </n-button>
@@ -130,6 +130,9 @@ const renderIcon = (icon) => {
 
 export default defineComponent({
   name: 'Index',
+  created() {
+    this.islogin()
+  },
   data() {
     let showListInfo = (id) => {
       this.id = id
@@ -140,6 +143,8 @@ export default defineComponent({
       this.comName = componentName
     }
     return {
+      loginIs: false,
+      username: '登录',
       iconUrl: ref('https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg'),
       jsonLyric: null,
       lyric: null,
@@ -161,23 +166,7 @@ export default defineComponent({
       id: 514947114,
       audioPlayerDuration: ref(0),
       rightWidth: this.windowWidth - 190 + 'px',
-      options: [
-        {
-          label: '用户资料',
-          key: 'profile',
-          icon: renderIcon(UserIcon),
-        },
-        {
-          label: '编辑用户资料',
-          key: 'editProfile',
-          icon: renderIcon(EditIcon),
-        },
-        {
-          label: '退出登录',
-          key: 'logout',
-          icon: renderIcon(LogoutIcon),
-        },
-      ],
+      options: '',
       showListInfo,
       change,
       secondsFormat(sec) {
@@ -199,15 +188,61 @@ export default defineComponent({
         return hour + ":" + minute + ":" + second;
       },
       dropdown(data) {
-        console.log(data)
+        switch (data) {
+          case 'login': {
+            axios.get('https://api.feranydev.com/cloudmusic/logout', {
+              withCredentials: true,
+            }).then((res) => {
+              console.log(res.data)
+            }).catch((err) => {
+              console.log(err)
+            })
+            break
+          }
+        }
       },
     }
   },
   methods: {
-    hansu({lineNum, txt}) {
-      console.log('111')
-      console.log(lineNum)
-      console.log(txt)
+    loginTest() {
+      console.log('是否登录' + this.loginIs)
+      if (!this.loginIs) {
+        this.change('login')
+      }
+    },
+    islogin() {
+      axios.get('https://api.feranydev.com/cloudmusic/login/status', {
+        withCredentials: true,
+      }).then((res) => {
+        console.log(res)
+        let data = res.data.data
+        console.log(data.account)
+        if (data.account !== 'null' || data.account !== null) {
+          console.log(data)
+          console.log(data.profile.nickname)
+          this.loginIs = true
+          this.username = data.profile.nickname
+          this.options = [
+            {
+              label: '用户资料',
+              key: 'profile',
+              icon: renderIcon(UserIcon),
+            },
+            {
+              label: '编辑用户资料',
+              key: 'editProfile',
+              icon: renderIcon(EditIcon),
+            },
+            {
+              label: '退出登录',
+              key: 'logout',
+              icon: renderIcon(LogoutIcon),
+            },
+          ]
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
     },
     setLrc(id) {
       let that = this
@@ -343,8 +378,6 @@ export default defineComponent({
       _this.rightWidth = _this.windowWidth - 190 + 'px'
       // this.method()
     }
-  },
-  created() {
   },
   watch: {
     progress: async function (time, old) {
