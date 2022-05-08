@@ -10,8 +10,10 @@
     "@vicons/ionicons5": "^0.11.0",
     "@vitejs/plugin-vue": "^2.3.1",
     "axios": "^0.27.2",
+    "lyric-parser": "^1.0.1",
     "vue": "^3.2.32",
     "vue-cookies": "^1.8.1",
+    "vue-lyric-scroll": "^1.0.5",
     "vue-router": "^4.0.15",
     "vue3-audio-player": "^1.0.4",
     "vue3-lazy": "^1.0.0-alpha.1"

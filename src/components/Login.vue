@@ -58,27 +58,30 @@ export default {
       this.isLoging = true;
 
       let api = 'https://api.feranydev.com/cloudmusic/login/cellphone'
+      // let api = 'https://api.feranydev.com/cloudmusic/search'
+      axios.defaults.withCredentials = true
       await axios.post(api, {
         phone: this.account,
-        md5_password: password_md5
+        md5_password: password_md5,
+        realIP: '36.251.161.154'
+        // keywords: '%E6%B5%B7%E9%98%94%E5%A4%A9%E7%A9%BA'
       },{
         withCredentials: true,
       }).then((res) => {
         console.log(res)
         console.log(res.data.cookie)
-        this.$cookies.set("token", res.data.cookie, "1d")
+        // this.$cookies.set("token", res.data.cookie, "1d")
+        // this.$cookies.set(
+        //     "test",
+        //     'MUSIC_R_T=1486970707272; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/eapi/clientlog;;MUSIC_A_T=1486970674844; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/neapi/feedback;;MUSIC_R_T=1486970707272; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/eapi/feedback;;MUSIC_R_T=1486970707272; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/weapi/clientlog;;MUSIC_A_T=1486970674844; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/neapi/clientlog;;MUSIC_R_T=1486970707272; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/api/feedback;;MUSIC_R_T=1486970707272; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/neapi/clientlog;;MUSIC_R_T=1486970707272; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/openapi/clientlog;;MUSIC_A_T=1486970674844; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/api/feedback;;MUSIC_A_T=1486970674844; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/weapi/feedback;;MUSIC_R_T=1486970707272; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/weapi/feedback;;MUSIC_A_T=1486970674844; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/weapi/clientlog;;__remember_me=true; Max-Age=1296000; Expires=Mon, 23 May 2022 02:41:31 GMT; Path=/;;MUSIC_A_T=1486970674844; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/api/clientlog;;MUSIC_A_T=1486970674844; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/eapi/feedback;;MUSIC_R_T=1486970707272; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/wapi/clientlog;;MUSIC_R_T=1486970707272; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/wapi/feedback;;MUSIC_SNS=; Max-Age=0; Expires=Sun, 08 May 2022 02:41:31 GMT; Path=/;NMTID=00Onng80yEOlq8Xlk64pCBUNu_miNAAAAGAoYsi4g; Max-Age=315360000; Expires=Wed, 05 May 2032 02:41:31 GMT; Path=/;;MUSIC_A_T=1486970674844; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/eapi/clientlog;;MUSIC_R_T=1486970707272; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/api/clientlog;;__csrf=b0e9a0e1a671124902150d4aef54180b; Max-Age=1296010; Expires=Mon, 23 May 2022 02:41:41 GMT; Path=/;;MUSIC_A_T=1486970674844; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/openapi/clientlog;;MUSIC_R_T=1486970707272; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/neapi/feedback;;MUSIC_U=c0a7edac03fb60f0d5169f87b40a3b89cf34cb06c52baf00e2f6bcf6ae64a9f6519e07624a9f0053bcadb48f122ccd159ed07cada3335d69c0f81b713f7c49be3f8cd139549a2c6ca89fe7c55eac81f3; Max-Age=1296000; Expires=Mon, 23 May 2022 02:41:31 GMT; Path=/;;MUSIC_A_T=1486970674844; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/wapi/feedback;;MUSIC_A_T=1486970674844; Max-Age=2147483647; Expires=Fri, 26 May 2090 05:55:38 GMT; Path=/wapi/clientlog;',
+        //     "1d",
+        //       '/')
         this.isLoging = false;
         this.change('Main')
         console.log('登录成功')
       }).catch((err) => {
         console.log(err)
       })
-      // setTimeout(() => {
-      //   this.$cookies.set("user_session", "25j_7Sl6xDq2Kc3ym0fmrSSk2xV2XkUkX", "1d")
-      //   this.isLoging = false;
-      //   this.change('Main')
-      //   console.log('登录成功')
-      // }, 3000)
     }
   }
 }

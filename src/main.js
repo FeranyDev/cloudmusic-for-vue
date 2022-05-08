@@ -5,9 +5,11 @@ import naive from 'naive-ui'
 import Axios from 'axios'
 let audio = new Audio();
 import VueCookies from 'vue-cookies'
+import axios from "axios";
 
 const app = createApp(App)
 
+axios.defaults.withCredentials = true
 Axios.defaults.withCredentials = true
 app.config.globalProperties.audioObject = audio
 

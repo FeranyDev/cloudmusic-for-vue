@@ -14,7 +14,6 @@
             :columns="columns"
             :data="data"
             :pagination="pagination"
-            :bordered="false"
         />
       </div>
     </div>

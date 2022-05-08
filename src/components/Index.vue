@@ -1,95 +1,97 @@
 <template>
   <n-layout class="windowsHeight">
-    <n-layout position="absolute" style="top: 0; bottom: 97px" has-sider>
+    <n-layout has-sider position="absolute" style="top: 0; bottom: 97px">
       <n-layout-sider
-          content-style="padding: 24px;"
           :native-scrollbar="false"
           bordered
+          content-style="padding: 24px;"
       >
         <Sidebar :control="change"/>
       </n-layout-sider>
-      <n-layout content-style="padding: 24px;" :native-scrollbar="false">
+      <n-layout :native-scrollbar="false" content-style="padding: 24px;">
         <n-dropdown
             :options="options"
             @select="dropdown"
         >
           <n-button
-              strong
-              secondary
               round
-              type="primary"
+              secondary
+              strong
               style="position: fixed; right: 30px; background-color: #daf0e4"
+              type="primary"
               v-on:click="change('login')"
           >用户名
           </n-button>
         </n-dropdown>
-        <n-back-top :right="50" :bottom="140"/>
+        <n-back-top :bottom="140" :right="50"/>
         <component
             :is="comName"
-            :list-id="id"
+            :change="change"
             :create-play="createAudio"
             :create-song-list="createSongList"
+            :list-id="id"
+            :lyric="lyric"
             :seconds-format="secondsFormat"
-            :change="change"
-            :show-list-info="showListInfo"></component>
+            :show-list-info="showListInfo"
+            :text="lyricText"
+            :time="progress"></component>
         <router-view></router-view>
       </n-layout>
     </n-layout>
-    <n-layout-footer position="absolute" style="height: 97px" bordered>
+    <n-layout-footer bordered position="absolute" style="height: 97px">
       <n-image
-          width="80"
-          src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-          fallback-src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
           preview-disabled
+          v-bind:src="iconUrl"
           style="margin-left: 20px; margin-top: 10px; margin-right: 10px; float: left"
+          width="80"
       />
       <div style="float:left; margin-top: 25px; margin-right: 30px">
         <a href="#" style="color: black; text-decoration: none">{{ name }}</a>
         <br>
         <a href="#" style="color: black; text-decoration: none">{{ player }}</a>
       </div>
-      <n-button text style="font-size: 24px;float: left; margin-top: 35px">
-        <n-icon color="">
+      <n-button style="font-size: 24px;float: left; margin-top: 35px" text>
+        <n-icon color="" v-on:click="change('lyricv')">
           <Heart28Regular/>
         </n-icon>
       </n-button>
-      <n-button text style="font-size: 36px;float: left; margin-top: 35px;margin-left: 5%">
+      <n-button style="font-size: 36px;float: left; margin-top: 35px;margin-left: 5%" text>
         <n-icon v-on:click="previousSong">
           <PlaySkipBackCircleOutline/>
         </n-icon>
       </n-button>
-      <n-button text style="font-size: 48px;float: left; margin-top: 25px;margin-left: 1%">
+      <n-button style="font-size: 48px;float: left; margin-top: 25px;margin-left: 1%" text>
         <n-icon v-on:click="audioPlay">
           <CaretForwardCircleOutline v-if="notPlay"/>
           <PauseCircleOutline v-else/>
         </n-icon>
       </n-button>
-      <n-button text style="font-size: 36px;float: left; margin-top: 35px;margin-left: 1%">
+      <n-button style="font-size: 36px;float: left; margin-top: 35px;margin-left: 1%" text>
         <n-icon v-on:click="nextSong">
-          <PlaySkipForwardCircleOutline v-on:click=""/>
+          <PlaySkipForwardCircleOutline/>
         </n-icon>
       </n-button>
-      <n-space vertical style="width: 45%; padding-left: 1.5%; padding-top: 60px; position: relative; float: left">
+      <n-space style="width: 45%; padding-left: 1.5%; padding-top: 60px; position: relative; float: left" vertical>
         <n-slider v-model:value="progress"
+                  :format-tooltip="secondsFormat"
+                  :max="parseInt(duration)"
                   :step="1"
                   :tooltip="true"
-                  :max="parseInt(duration)"
-                  @update:value="setPlayTime"
-                  :format-tooltip="secondsFormat"/>
+                  @update:value="setPlayTime"/>
         <p style="position: absolute; top: 22px">{{ this.secondsFormat(progress) }}</p>
         <p style="position: absolute; top: 22px; right: 0">{{ this.secondsFormat(duration) }}</p>
       </n-space>
       <div style="float:right; width: 20%">
-        <n-space vertical style="width: 150px; float: right; margin-right: 40px; padding-top: 42px;">
+        <n-space style="width: 150px; float: right; margin-right: 40px; padding-top: 42px;" vertical>
           <n-slider v-model:value="volume" :step="10" :tooltip="true" @update:value="setPlayVolume"/>
         </n-space>
-        <n-button text style="font-size: 36px;float: right; margin-top: 35px;margin-left: 20px; margin-right: 20px">
+        <n-button style="font-size: 36px;float: right; margin-top: 35px;margin-left: 20px; margin-right: 20px" text>
           <n-icon>
             <ListCircle/>
           </n-icon>
         </n-button>
       </div>
-      <audio src='{{url}}' ref="audioPlayer"/>
+      <audio ref="audioPlayer" src='{{url}}'/>
     </n-layout-footer>
   </n-layout>
 </template>
@@ -100,6 +102,7 @@ import Login from './Login.vue'
 import Main from './Main.vue'
 import PlayList from './PlayList.vue'
 import Search from './Search.vue'
+import Lyricv from './Lyricv.vue'
 import {defineComponent, h, ref} from 'vue'
 import {NIcon} from 'naive-ui'
 import {
@@ -114,7 +117,8 @@ import {
 } from '@vicons/ionicons5'
 import 'vue3-audio-player/dist/style.css'
 import {Heart28Regular} from '@vicons/fluent'
-import axios from "axios";
+import axios from "axios"
+import Lyric from 'lyric-parser'
 
 const renderIcon = (icon) => {
   return () => {
@@ -126,7 +130,7 @@ const renderIcon = (icon) => {
 
 export default defineComponent({
   name: 'Index',
-  data(props) {
+  data() {
     let showListInfo = (id) => {
       this.id = id
       change('playList')
@@ -136,6 +140,10 @@ export default defineComponent({
       this.comName = componentName
     }
     return {
+      iconUrl: ref('https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg'),
+      jsonLyric: null,
+      lyric: null,
+      lyricText: '',
       first: true,
       songList: [],
       songNo: 0,
@@ -192,11 +200,34 @@ export default defineComponent({
       },
       dropdown(data) {
         console.log(data)
-        // change(data)
       },
     }
   },
   methods: {
+    hansu({lineNum, txt}) {
+      console.log('111')
+      console.log(lineNum)
+      console.log(txt)
+    },
+    setLrc(id) {
+      let that = this
+      console.log(id)
+      let api = 'https://api.feranydev.com/cloudmusic/lyric?id=' + id + "&realIP=36.251.161.154"
+      axios.get(api).then((res) => {
+        let regexTrim = new RegExp(/.\d\d\d]/, "g");
+        let lyricStr = res.data.lrc.lyric
+        let tmp = lyricStr.replace(regexTrim, '.00]')
+        if (that.jsonLyric !== null) that.jsonLyric.stop()
+        that.jsonLyric = new Lyric(tmp, function (obj) {
+          console.log(obj)
+          that.lyricText = obj.txt
+        })
+        console.log(that.jsonLyric)
+        if (that.jsonLyric !== null) that.jsonLyric.play()
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
     createSongList(songs) {
       this.songList = songs
       this.songNo = 0
@@ -223,19 +254,23 @@ export default defineComponent({
     async getSongInfo(id) {
       let that = this
       let api = "https://api.feranydev.com/cloudmusic/song/detail?ids=" + id + "&realIP=36.251.161.154"
-      const res = await axios.get(api,{
+      const res = await axios.get(api, {
         withCredentials: true,
       }).catch((err) => {
         console.log(err)
       })
       let name = res.data.songs[0].name
       let player = res.data.songs[0].ar[0].name
+      let url = res.data.songs[0].al.picUrl
       console.log(name + player)
       that.name = name
       that.player = player
+      that.iconUrl = url
     },
     createAudio(id) {
       this.getSongInfo(id)
+      this.setLrc(id)
+      console.log(id)
       const {audioPlayer} = this.$refs
       audioPlayer.src = 'https://music.163.com/song/media/outer/url?id=' + id + '.mp3'
       audioPlayer.load()
@@ -250,7 +285,7 @@ export default defineComponent({
         this.first = false
       }
     },
-    setEventListener(audioPlayer){
+    setEventListener(audioPlayer) {
       let that = this
       audioPlayer.addEventListener("durationchange", function () {
         that.duration = ref(parseInt(audioPlayer.duration.toString()))
@@ -262,11 +297,18 @@ export default defineComponent({
       });
       audioPlayer.addEventListener("pause", function () {
         that.notPlay = true
+        if (that.jsonLyric !== null) that.jsonLyric.togglePlay()
       });
-      audioPlayer.addEventListener('ended', function (){
+      audioPlayer.addEventListener("play", function () {
+        that.notPlay = false
+        if (that.jsonLyric !== null) that.jsonLyric.play()
+      });
+      audioPlayer.addEventListener('ended', function () {
         audioPlayer.pause();
         that.notPlay = true
-        console.log('下一曲')
+        // that.jsonLyric = null
+        that.jsonLyric.stop()
+        console.log('结束')
         that.nextSong()
       });
     },
@@ -280,6 +322,7 @@ export default defineComponent({
     }
   },
   components: {
+    Lyricv,
     Search,
     PlayList,
     Main,
@@ -303,6 +346,11 @@ export default defineComponent({
   },
   created() {
   },
+  watch: {
+    progress: async function (time, old) {
+      this.jsonLyric.seek(time * 1000)
+    }
+  }
 })
 </script>
 

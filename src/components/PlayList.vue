@@ -31,7 +31,6 @@
           :columns="columns"
           :data="songs"
           :pagination="pagination"
-          :bordered="false"
       />
     </div>
   </div>
@@ -112,21 +111,6 @@ export default {
     console.log("死了")
   }
 };
-
-function Cutsubstr(str, len) {
-  if (!str || !len) {
-    return '';
-  }
-  let build = "";
-  for (let i = 0; i < str.length && len > 0; i++) {
-    build += str.substr(i, 1);
-    len -= str.charCodeAt(i) > 127 ? 2 : 1;
-  }
-  if (build.length < str.length)
-    build += "...";
-  return build;
-}
-
 
 const createColumns = ({play}) => {
   return [
