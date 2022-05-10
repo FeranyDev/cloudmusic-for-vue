@@ -12,7 +12,7 @@
 import {defineComponent, h, ref} from 'vue'
 import {NIcon} from 'naive-ui'
 import {
-  BookOutline as BookIcon
+  BookOutline as BookIcon, SearchOutline
 } from '@vicons/ionicons5'
 
 function renderIcon(icon) {
@@ -25,7 +25,7 @@ function menu(key, item) {
 }
 
 
-const menuOptions = [
+const menuOptions = ref([
   {
     label: '主页',
     key: 'main',
@@ -34,9 +34,9 @@ const menuOptions = [
   {
     label: '搜索',
     key: 'search',
-    icon: renderIcon(BookIcon)
+    icon: renderIcon(SearchOutline)
   }
-]
+])
 
 
 export default defineComponent({

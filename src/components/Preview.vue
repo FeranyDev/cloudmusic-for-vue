@@ -19,7 +19,7 @@
 </template>
 
 <script>
-await new Promise((resolve) => setTimeout(resolve, 3000))
+new Promise((resolve) => setTimeout(resolve, 3000))
 
 export default {
   name: 'Preview',

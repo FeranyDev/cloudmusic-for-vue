@@ -24,15 +24,19 @@
 import Loading from './Loading.vue'
 import md5 from "js-md5"
 import axios from "axios";
-
+import {useMessage} from "naive-ui";
 
 export default {
   name: 'Login',
   data() {
+    const message = useMessage()
     return {
       isLoging: false,
       account: '',
-      password: ''
+      password: '',
+      warning(value) {
+        message.warning(value);
+      },
     }
   },
   props: [
@@ -47,36 +51,37 @@ export default {
         this.toLogin();
       }
     },
-    //登录请求
     async toLogin() {
+      let that = this
       let password_md5 = md5(this.password)
       console.log(password_md5);
-      let loginParam = {
-        phone: this.account,
-        md5_password: password_md5
-      }
       this.isLoging = true;
       let api = 'https://api.feranydev.com/cloudmusic/login/cellphone'
-      // let api = 'https://api.feranydev.com/cloudmusic/search'
       axios.defaults.withCredentials = true
       await axios.post(api, {
         phone: this.account,
         md5_password: password_md5,
         realIP: '36.251.161.154'
-        // keywords: '%E6%B5%B7%E9%98%94%E5%A4%A9%E7%A9%BA'
       }, {
         withCredentials: true,
       }).then((res) => {
-        console.log(res)
-        console.log(res.data.cookie)
-        this.isLoging = false;
-        this.change('Main')
-        console.log('登录成功')
+        console.log(res.data.code);
+        if (res.data.msg === '密码错误' || res.data.code === 400) {
+          that.isLoging = false
+          console.log('登录失败')
+          that.warning("登录失败")
+        }
+        else {
+          that.isLoging = false;
+          that.change('Main')
+          console.log('登录成功')
+        }
       }).catch((err) => {
+        that.isLoging = false
+        console.log('网络错误')
+        that.warning("网络错误")
         console.log(err)
       })
-      // console.log('设置cookie')
-      // this.$cookies.set("token", cook, "1d")
     }
   }
 }

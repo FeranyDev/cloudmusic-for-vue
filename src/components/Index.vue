@@ -24,18 +24,23 @@
           </n-button>
         </n-dropdown>
         <n-back-top :bottom="140" :right="50"/>
+
+        <n-message-provider>
         <component
             :is="comName"
             :change="change"
             :create-play="createAudio"
             :create-song-list="createSongList"
             :list-id="id"
+            :loginIs="loginIs"
             :lyric="lyric"
+            :play="notPlay"
             :seconds-format="secondsFormat"
             :show-list-info="showListInfo"
             :text="lyricText"
             :time="progress"></component>
         <router-view></router-view>
+        </n-message-provider>
       </n-layout>
     </n-layout>
     <n-layout-footer bordered position="absolute" style="height: 97px">
@@ -143,12 +148,13 @@ export default defineComponent({
       this.comName = componentName
     }
     return {
+      uid: 0,
       loginIs: false,
       username: '登录',
       iconUrl: ref('https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg'),
       jsonLyric: null,
       lyric: null,
-      lyricText: '',
+      lyricText: [],
       first: true,
       songList: [],
       songNo: 0,
@@ -161,12 +167,12 @@ export default defineComponent({
       count: 0,
       windowWidth: document.documentElement.clientWidth,
       windowHeight: document.documentElement.clientHeight + 'px',
-      url: '',
-      comName: 'Search',
+      url: 'https://music.163.com/song/media/outer/url?id=33894312.mp3',
+      comName: 'Main',
       id: 514947114,
       audioPlayerDuration: ref(0),
       rightWidth: this.windowWidth - 190 + 'px',
-      options: '',
+      options: [],
       showListInfo,
       change,
       secondsFormat(sec) {
@@ -187,23 +193,28 @@ export default defineComponent({
         }
         return hour + ":" + minute + ":" + second;
       },
-      dropdown(data) {
-        switch (data) {
-          case 'login': {
-            axios.get('https://api.feranydev.com/cloudmusic/logout', {
-              withCredentials: true,
-            }).then((res) => {
-              console.log(res.data)
-            }).catch((err) => {
-              console.log(err)
-            })
-            break
-          }
-        }
-      },
     }
   },
   methods: {
+    dropdown(data) {
+      switch (data) {
+        case 'logout': {
+          axios.get('https://api.feranydev.com/cloudmusic/logout', {
+            withCredentials: true,
+          }).then((res) => {
+            console.log(res.data)
+            if (res.data.code === 200) {
+              this.loginIs = false
+              this.username = '登录'
+              this.options = []
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
+          break
+        }
+      }
+    },
     loginTest() {
       console.log('是否登录' + this.loginIs)
       if (!this.loginIs) {
@@ -214,47 +225,41 @@ export default defineComponent({
       axios.get('https://api.feranydev.com/cloudmusic/login/status', {
         withCredentials: true,
       }).then((res) => {
-        console.log(res)
-        let data = res.data.data
-        console.log(data.account)
-        if (data.account !== 'null' || data.account !== null) {
+        try {
+          console.log(res)
+          let data = res.data.data
           console.log(data)
+          console.log(data.account)
           console.log(data.profile.nickname)
           this.loginIs = true
           this.username = data.profile.nickname
+          this.uid = data.account.id
           this.options = [
-            {
-              label: '用户资料',
-              key: 'profile',
-              icon: renderIcon(UserIcon),
-            },
-            {
-              label: '编辑用户资料',
-              key: 'editProfile',
-              icon: renderIcon(EditIcon),
-            },
             {
               label: '退出登录',
               key: 'logout',
               icon: renderIcon(LogoutIcon),
             },
           ]
+        }catch (e) {
+          console.log(e)
         }
+
       }).catch((err) => {
         console.log(err)
       })
+      console.log(this.$cookies.keys());
     },
     setLrc(id) {
       let that = this
       console.log(id)
-      let api = 'https://api.feranydev.com/cloudmusic/lyric?id=' + id + "&realIP=36.251.161.154"
+      let api = 'https://api.feranydev.com/cloudmusic/lyric?id=' + id
       axios.get(api).then((res) => {
         let regexTrim = new RegExp(/.\d\d\d]/, "g");
         let lyricStr = res.data.lrc.lyric
         let tmp = lyricStr.replace(regexTrim, '.00]')
         if (that.jsonLyric !== null) that.jsonLyric.stop()
         that.jsonLyric = new Lyric(tmp, function (obj) {
-          console.log(obj)
           that.lyricText = obj.txt
         })
         console.log(that.jsonLyric)
@@ -288,7 +293,7 @@ export default defineComponent({
     },
     async getSongInfo(id) {
       let that = this
-      let api = "https://api.feranydev.com/cloudmusic/song/detail?ids=" + id + "&realIP=36.251.161.154"
+      let api = "https://api.feranydev.com/cloudmusic/song/detail?ids=" + id
       const res = await axios.get(api, {
         withCredentials: true,
       }).catch((err) => {
@@ -313,6 +318,7 @@ export default defineComponent({
       if (playPromise !== undefined) {
         playPromise.then(_ => {
         }).catch(error => {
+          console.log(error)
         });
       }
       if (this.first) {
