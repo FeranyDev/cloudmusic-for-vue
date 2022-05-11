@@ -6,7 +6,10 @@
           bordered
           content-style="padding: 24px;"
       >
-        <Sidebar :control="change"/>
+        <Sidebar
+            :control="change"
+            :show-list-info="showListInfo"
+            :uid="uid"/>
       </n-layout-sider>
       <n-layout :native-scrollbar="false" content-style="padding: 24px;">
         <n-dropdown
@@ -31,6 +34,7 @@
             :change="change"
             :create-play="createAudio"
             :create-song-list="createSongList"
+            :islogin="islogin"
             :list-id="id"
             :loginIs="loginIs"
             :lyric="lyric"
@@ -57,7 +61,8 @@
       </div>
       <n-button style="font-size: 24px;float: left; margin-top: 35px" text>
         <n-icon color="" v-on:click="change('lyricv')">
-          <Heart28Regular/>
+<!--          <Heart28Regular/>-->
+          词
         </n-icon>
       </n-button>
       <n-button style="font-size: 36px;float: left; margin-top: 35px;margin-left: 5%" text>
@@ -140,11 +145,14 @@ export default defineComponent({
   },
   data() {
     let showListInfo = (id) => {
-      this.id = id
+      this.id = ref(id)
       change('playList')
     }
     let change = (componentName) => {
       console.log(componentName)
+      if (typeof componentName === typeof 0) {
+
+      }
       this.comName = componentName
     }
     return {
@@ -169,7 +177,7 @@ export default defineComponent({
       windowHeight: document.documentElement.clientHeight + 'px',
       url: 'https://music.163.com/song/media/outer/url?id=33894312.mp3',
       comName: 'Main',
-      id: 514947114,
+      id: ref(514947114),
       audioPlayerDuration: ref(0),
       rightWidth: this.windowWidth - 190 + 'px',
       options: [],
@@ -204,6 +212,7 @@ export default defineComponent({
           }).then((res) => {
             console.log(res.data)
             if (res.data.code === 200) {
+              this.uid = 0
               this.loginIs = false
               this.username = '登录'
               this.options = []

@@ -1,6 +1,6 @@
 <template>
   <div id="login" class="login">
-    <a class="log-close"><i class="icons close"></i></a>
+    <a class="log-close"><i class="icons close" v-on:click="change('main')"></i></a>
     <div class="log-bg">
       <div class="log-cloud cloud1"></div>
       <div class="log-cloud cloud2"></div>
@@ -40,7 +40,8 @@ export default {
     }
   },
   props: [
-    'change'
+    'change',
+    'islogin'
   ],
   components: {
     Loading
@@ -72,6 +73,7 @@ export default {
           that.warning("登录失败")
         }
         else {
+          that.islogin()
           that.isLoging = false;
           that.change('Main')
           console.log('登录成功')

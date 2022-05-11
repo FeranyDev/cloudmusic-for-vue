@@ -40,7 +40,7 @@
 import {NButton} from "naive-ui";
 import {CaretForwardCircleOutline} from "@vicons/ionicons5";
 import {Heart28Regular} from '@vicons/fluent'
-import {h} from "vue";
+import {h, ref} from "vue";
 import axios from "axios";
 
 
@@ -71,12 +71,12 @@ export default {
         let time = props.secondsFormat(parseInt((tmp[i].dt / 1000).toString()))
         data[i] = {
           index: i + 1,
-          name: tmp[i].name, //歌名
-          id: tmp[i].id,   //id
-          ar: tmp[i].ar[0].name,   //作者
-          dt: time,   //时长
-          al: tmp[i].al,   //专辑
-          picUrl: tmp[i].al.picUrl//图片
+          name: tmp[i].name,        //歌名
+          id: tmp[i].id,            //id
+          ar: tmp[i].ar[0].name,    //作者
+          dt: time,                 //时长
+          al: tmp[i].al,            //专辑
+          picUrl: tmp[i].al.picUrl  //图片
         }
       }
       console.log(data)
@@ -84,9 +84,9 @@ export default {
       console.log(err)
     })
     return {
-      data: playlist,
-      url: playlist.coverImgUrl,
-      songs: data,
+      data: ref(playlist),
+      url: ref(playlist.coverImgUrl),
+      songs: ref(data),
       pagination: false,
       columns: createColumns({
         play(row) {
@@ -109,6 +109,38 @@ export default {
   },
   deactivated() {
     console.log("死了")
+  },
+  watch: {
+    listId: async function (news, old) {
+      let api = "https://api.feranydev.com/cloudmusic/playlist/detail?id=" + this.listId + "&realIP=36.251.161.154"
+      let data = []
+      let playlist = []
+      await axios.get(api, {
+        withCredentials: true,
+      }).then((res) => {
+        playlist = res.data.playlist
+        console.log(playlist)
+        let tmp = playlist.tracks
+        for (let i = 0; i < tmp.length; i++) {
+          let time = this.secondsFormat(parseInt((tmp[i].dt / 1000).toString()))
+          data[i] = {
+            index: i + 1,
+            name: tmp[i].name,        //歌名
+            id: tmp[i].id,            //id
+            ar: tmp[i].ar[0].name,    //作者
+            dt: time,                 //时长
+            al: tmp[i].al,            //专辑
+            picUrl: tmp[i].al.picUrl  //图片
+          }
+        }
+        console.log(data)
+        this.data = playlist
+        this.url = playlist.coverImgUrl
+        this.songs = data
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
   }
 };
 
