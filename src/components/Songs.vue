@@ -1,25 +1,25 @@
 <template>
   <div v-if="all">
     <SubColumn v-if="loginIs"
-        :resource="resource"
-        :title='private'
-        :show-list-info="showListInfo"
-        style="padding-left: 20px"
+               :resource="resource"
+               :show-list-info="showListInfo"
+               :title='private'
+               style="padding-left: 20px"
     />
     <SubColumn
         v-for="(tag, index) in tags"
         :key="index"
-        :show-list-info="showListInfo"
         :list-all="listAll"
+        :show-list-info="showListInfo"
         :title="tag"
         style="padding-left: 20px"
     />
   </div>
   <div v-else>
     <SubColumnAll
-        :title="title"
         :back="back"
-        :show-list-info="showListInfo"/>
+        :show-list-info="showListInfo"
+        :title="title"/>
   </div>
 </template>
 
@@ -35,46 +35,49 @@ export default {
     SubColumnAll,
     SubColumn,
   },
-  methods:{
-    listAll(value){
+  methods: {
+    listAll(value) {
       this.all = false
       this.title = value
     },
-    back(){
+    back() {
       this.all = true
       // this.title = ''
-    }
+    },
+    getRecommend(){
+      let playlists = []
+      console.log('开始')
+      let api = "https://api.feranydev.com/cloudmusic/recommend/resource"
+      axios.get(api, {
+        withCredentials: true,
+      }).then((res) => {
+        let data = res.data
+        console.log(res)
+        if (data.code === 200) {
+          let tmp = data.recommend
+          for (let i = 0; i < tmp.length; i++) {
+            playlists[i] = {
+              id: tmp[i].id,
+              coverImgUrl: tmp[i].picUrl,
+              description: tmp[i].description,
+              name: tmp[i].name
+            }
+          }
+          console.log(playlists)
+          this.resource = playlists
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
   },
   props: ['showListInfo', 'loginIs'],
   setup() {
-    let playlists = []
-    console.log('开始')
-    let api = "https://api.feranydev.com/cloudmusic/recommend/resource"
-    axios.get(api, {
-      withCredentials: true,
-    }).then((res) => {
-      let data = res.data
-      console.log(res)
-      if (data.code === 200) {
-        let tmp = data.recommend
-        for (let i = 0; i < tmp.length; i++) {
-          playlists[i] = {
-            id: tmp[i].id,
-            coverImgUrl: tmp[i].picUrl,
-            description: tmp[i].description,
-            name: tmp[i].name
-          }
-        }
-        console.log(playlists)
-      }
-    }).catch((err) => {
-      console.log(err)
-    })
     return {
       title: '',
       all: ref(true),
       private: '私人推荐',
-      resource: playlists,
+      resource: ref([]),
       data: '1',
       tags: [
         '华语',
@@ -91,8 +94,13 @@ export default {
       ],
     }
   },
-  created() {
-
+  mounted() {
+    this.getRecommend()
   },
+  watch: {
+    loginIs: function () {
+      this.getRecommend()
+    }
+  }
 }
 </script>

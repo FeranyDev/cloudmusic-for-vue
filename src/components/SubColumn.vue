@@ -54,7 +54,7 @@ export default {
     return {
       showInfo: showInfo,
       data: '',
-      songListInformation: playlists,
+      songListInformation: ref(playlists),
       gridCollapsed: ref(true),
       gridCollapsedRows: ref(1),
       gridItemCount: ref(68),
@@ -76,6 +76,11 @@ export default {
             ))
     )
   },
+  watch: {
+    resource: function (news){
+      this.songListInformation = news
+    }
+  }
 }
 </script>
 
